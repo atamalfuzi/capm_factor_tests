@@ -109,7 +109,7 @@ HML has no alpha once the other four are in, the result Fama and French (2015) r
 | | Three-factor | 1.48 | 0.124 | n/a | 0.261 | 0.54 |
 | | Five-factor | 1.64 | 0.076 | n/a | 0.258 | 0.64 |
 
-The last row is the months since the assignment's data ended, and it overlaps the row above it.
+The last three rows are the months since the assignment's data ended, and they overlap the three above them.
 
 Before 1963 the CAPM is not rejected and beta lines up with mean returns, though the price of market risk is imprecise (0.67, Shanken t 1.22). The three- and five-factor models fit best in 1963 to 1990, close to the period they were built on. Since 2009 their R² has fallen to 0.14 and 0.16, and whether they are rejected depends on the p-value used. The 72 months since 2020-10 are too few to settle much with 25 portfolios.
 
@@ -131,13 +131,13 @@ Before 1963 the CAPM is not rejected and beta lines up with mean returns, though
 | | Three-factor | 2.22 | 0.007 | 0.13 | 0.03 | −1.54 |
 | | Five-factor | 2.76 | 0.002 | 0.20 | 0.03 | −2.56 |
 
-Size and book-to-market portfolios are a low bar, because the factors are built from the same sorts (Lewellen, Nagel and Shanken, 2010). The five-factor model's gain shows up on profitability sorts, as you would expect. On industries the pattern reverses: the CAPM is not rejected, and the extra factors raise the mean absolute alpha from 0.127 to 0.175 and 0.216. The CAPM's failure here is mostly about size and value sorted portfolios, and the extra factors do not carry over to portfolios formed another way.
+Size and book-to-market portfolios are a low bar, because the factors are built from the same sorts (Lewellen, Nagel and Shanken, 2010). The five-factor model's gain shows up on profitability sorts, as you would expect. On industries the pattern reverses: the CAPM is not rejected, and the extra factors raise the mean absolute alpha from 0.127 to 0.175 and 0.216. The CAPM's rejection comes from portfolios sorted on these characteristics, and the extra factors' gains do not carry over to portfolios formed another way.
 
 ## Data and checks
 
 - All returns come from the [Kenneth French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html). The five-factor file has its own SMB, which correlates 0.98 with the three-factor file's, so each model uses its own file. The market and T-bill series agree between the two files to within 0.08 and 0 points.
 - `coursework/` holds the assignment's two data files, copied from my public [coursework archive](https://github.com/atamalfuzi/economics_coursework), so the reproduction test runs without a download.
-- GRS assumes normal errors, so I also resample months in blocks of 12 with the alphas taken out. Simulating 200 samples with zero alphas (`output/resampled_size.csv`), the F test rejects at 5% in 4% to 8% of them. The resampled test rejects in about 5% at 759 months, 2% to 3% at 213 and never at 72. So it leans conservative in shorter samples, and it is left out for the 72-month row. The p-values in `output/` for that row should not be used. With 2000 draws its floor is 0.0005.
+- GRS assumes normal errors, so I also resample months in blocks of 12 with the alphas taken out. Simulating 200 samples with zero alphas (`output/resampled_size.csv`), the F test rejects at 5% in 4% to 8% of them. The resampled test rejects in about 5% at 759 months, 2% to 3% at 213 and never at 72. So it leans conservative in shorter samples, and it is left out for the 72-month rows, although `output/subperiods.csv` still lists it. With 2000 draws its floor is 0.0005.
 - Betas are full-sample within each period, and fitted means use the same data. Errors in the betas bias prices toward zero. The R² ranges are percentile ranges and not corrected for this.
 - The subperiod rows are several tests on the same data, with no adjustment for that.
 - Tests compare GRS with the squared t of one asset and with statsmodels' multivariate test, check its size by simulation, check Shanken errors against the actual spread of simulated estimates, and check the Hansen-Jagannathan distance against a numerical minimum.

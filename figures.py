@@ -19,7 +19,7 @@ plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.rig
                      "axes.edgecolor": MUTED, "xtick.color": MUTED, "ytick.color": MUTED, "axes.labelcolor": MUTED,
                      "axes.grid": True, "grid.color": GRID, "axes.axisbelow": True, "legend.frameon": False})
 SOURCE = "Source: Kenneth French Data Library, file built from the 202609 CRSP database."
-CORNERS = {"SMALL LoBM": ("Small growth", -9), "SMALL HiBM": ("Small value", -9)}  # points to the left, clear of the next panel
+CORNERS = {"SMALL LoBM": "Small growth", "SMALL HiBM": "Small value"}
 
 
 def save(fig, name, title, subtitle, caption):
@@ -30,11 +30,12 @@ def save(fig, name, title, subtitle, caption):
     plt.close(fig)
 
 
-def label_corners(ax, xs, ys, names):
+def label_corners(ax, xs, ys, names, right=()):
+    """Name the two corner portfolios, to the left of the point unless listed in right."""
     for x, y, name in zip(xs, ys, names):
         if name in CORNERS:
-            text, offset = CORNERS[name]
-            ax.annotate(text, (x, y), xytext=(offset, 0), textcoords="offset points", color=INK, fontsize=9, va="center", ha="right")
+            ax.annotate(CORNERS[name], (x, y), xytext=(9 if name in right else -9, 0), textcoords="offset points", color=INK, fontsize=9,
+                        va="center", ha="left" if name in right else "right")
 
 
 def capm_panel(ax, start, title):
@@ -73,7 +74,7 @@ def model_fit():
         d = table[table.model == model]
         ax.plot(ends, ends, color=MUTED, lw=1.2, ls="--")
         ax.scatter(d.fitted, d["mean"], s=45, color=COLOURS[model], edgecolor="white", linewidth=1, zorder=3)
-        label_corners(ax, d.fitted, d["mean"], d.portfolio)
+        label_corners(ax, d.fitted, d["mean"], d.portfolio, right=("SMALL LoBM",))
         ax.set_title(f"{model}: R² {models.r2[model]:.2f}, adjusted {models.adj_r2[model]:.2f}", loc="left", fontsize=11, color=INK)
         ax.set_xlabel("Fitted mean, % a month")
     axes[0].set_ylabel("Actual mean, % a month")
