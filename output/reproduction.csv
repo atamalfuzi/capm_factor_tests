@@ -1,0 +1,6 @@
+sample,first,last,months,r2,slope,intercept,mean_mkt_rf
+Coursework files,1926-07,2020-09,1131,0.11438,0.39925,0.66107,0.67001
+"Coursework files, stopped at 2019-12",1926-07,2019-12,1122,0.10354,0.40184,0.67123,0.66661
+"Current files, same months",1926-07,2020-09,1131,0.11757,0.41327,0.64211,0.67086
+"Current files, through latest",1926-07,2026-09,1203,0.097849,0.39875,0.67956,0.69416
+"Current files, 1963-07 to latest",1963-07,2026-09,759,0.08215,-0.36728,1.5164,0.59958

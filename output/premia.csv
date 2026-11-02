@@ -1,0 +1,25 @@
+sample,model,term,lambda,factor_mean,se_fm,se_shanken,t_fm,t_shanken
+Full history,CAPM,Intercept,0.40812,0,0.32094,0.32172,1.2716,1.2686
+Full history,CAPM,Mkt-RF,0.39875,0.69416,0.34602,0.34669,1.1524,1.1502
+Full history,Three-factor,Intercept,1.6474,0,0.39256,0.40368,4.1965,4.0809
+Full history,Three-factor,Mkt-RF,-0.91083,0.69416,0.4066,0.41651,-2.2401,-2.1868
+Full history,Three-factor,SMB,0.10269,0.16303,0.096677,0.09701,1.0622,1.0585
+Full history,Three-factor,HML,0.37552,0.35015,0.10554,0.10572,3.558,3.5519
+Full history,Five-factor,Intercept,1.0478,0,0.26066,0.27376,4.0197,3.8274
+Full history,Five-factor,Mkt-RF,-0.48739,0.5996,0.30833,0.31963,-1.5807,-1.5248
+Full history,Five-factor,SMB,0.25207,0.18012,0.11272,0.11303,2.2362,2.2301
+Full history,Five-factor,HML,0.29435,0.29153,0.11021,0.11046,2.6707,2.6647
+Full history,Five-factor,RMW,0.43948,0.2468,0.1733,0.18004,2.536,2.441
+Full history,Five-factor,CMA,-0.11231,0.2446,0.17264,0.1797,-0.65058,-0.62502
+Common sample,CAPM,Intercept,1.1554,0,0.36885,0.36985,3.1325,3.124
+Common sample,CAPM,Mkt-RF,-0.36728,0.59958,0.39652,0.39742,-0.92625,-0.92415
+Common sample,Three-factor,Intercept,1.1609,0,0.25747,0.26113,4.509,4.4459
+Common sample,Three-factor,Mkt-RF,-0.5546,0.59958,0.30316,0.30625,-1.8294,-1.811
+Common sample,Three-factor,SMB,0.11409,0.14306,0.11249,0.11258,1.0142,1.0134
+Common sample,Three-factor,HML,0.32554,0.29153,0.11037,0.11045,2.9494,2.9474
+Common sample,Five-factor,Intercept,1.0478,0,0.26066,0.27376,4.0197,3.8274
+Common sample,Five-factor,Mkt-RF,-0.48739,0.5996,0.30833,0.31963,-1.5807,-1.5248
+Common sample,Five-factor,SMB,0.25207,0.18012,0.11272,0.11303,2.2362,2.2301
+Common sample,Five-factor,HML,0.29435,0.29153,0.11021,0.11046,2.6707,2.6647
+Common sample,Five-factor,RMW,0.43948,0.2468,0.1733,0.18004,2.536,2.441
+Common sample,Five-factor,CMA,-0.11231,0.2446,0.17264,0.1797,-0.65058,-0.62502

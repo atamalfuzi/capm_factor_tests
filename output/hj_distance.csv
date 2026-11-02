@@ -1,0 +1,5 @@
+model,hj_distance,low,high,months
+Constant SDF,0.4001,0.36796,0.53436,759
+CAPM,0.37537,0.33878,0.51255,759
+Three-factor,0.35096,0.31603,0.48036,759
+Five-factor,0.32782,0.27773,0.45115,759

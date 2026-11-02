@@ -1,0 +1,7 @@
+months,errors,rejects_f,rejects_resampled
+72,normal,0.04,0
+72,"t, 4 df",0.05,0
+213,normal,0.075,0.03
+213,"t, 4 df",0.055,0.02
+759,normal,0.065,0.055
+759,"t, 4 df",0.05,0.05

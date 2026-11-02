@@ -1,0 +1,6 @@
+series,mean_abs_monthly_change,largest_monthly_change,where,largest_change_in_mean
+25 portfolios,0.19865,9.3998,1945-01 SMALL LoBM,0.0164
+Mkt-RF,0.012113,0.39,1931-09,0.00084881
+SMB,0.080027,1.73,1931-10,0.0028028
+HML,0.10908,2.67,1933-04,0.0045535
+RF,6.1892e-05,0.01,1959-06,8.8417e-06
