@@ -56,11 +56,11 @@ def capm_line():
     fig.subplots_adjust(left=0.075, right=0.975, top=0.8, bottom=0.26, wspace=0.08)
     capm_panel(axes[0], None, "1926-07 to 2026-09")
     capm_panel(axes[1], COMMON_START, "1963-07 to 2026-09")
-    axes[0].set_ylabel("Mean excess return, % a month")
+    axes[0].set_ylabel("Average excess return, % a month")
     axes[0].legend(loc="upper left", bbox_to_anchor=(0, -0.17), ncol=3, handlelength=1.6, columnspacing=1.4, labelcolor=MUTED, borderaxespad=0)
-    save(fig, "capm_line.png", "Market beta says little about mean returns, and since 1963 the slope is negative",
-         "Mean excess return of the 25 size and book-to-market portfolios against market beta.",
-         "The dashed line runs through the origin with the market's own mean excess return as its slope. " + SOURCE)
+    save(fig, "capm_line.png", "Market beta says little about average returns, and since 1963 the slope is negative",
+         "Average return above the T-bill rate of the 25 size and book-to-market portfolios, against market beta.",
+         "The dashed line is the CAPM: it starts at zero and rises by the market's average excess return per unit of beta. " + SOURCE)
 
 
 def model_fit():
@@ -76,10 +76,10 @@ def model_fit():
         ax.scatter(d.fitted, d["mean"], s=45, color=COLOURS[model], edgecolor="white", linewidth=1, zorder=3)
         label_corners(ax, d.fitted, d["mean"], d.portfolio, right=("SMALL LoBM",))
         ax.set_title(f"{model}: R² {models.r2[model]:.2f}, adjusted {models.adj_r2[model]:.2f}", loc="left", fontsize=11, color=INK)
-        ax.set_xlabel("Fitted mean, % a month")
-    axes[0].set_ylabel("Actual mean, % a month")
+        ax.set_xlabel("Fitted average, % a month")
+    axes[0].set_ylabel("Actual average, % a month")
     save(fig, "model_fit.png", "The factors line up mean returns on these portfolios",
-         "25 size and book-to-market portfolios, 1963-07 to 2026-09. Intercept and prices of risk are free.",
+         "25 size and book-to-market portfolios, 1963-07 to 2026-09. Intercept and factor prices estimated from the data.",
          "A point on the dashed line is priced exactly. Small growth stays well below the line under every model. " + SOURCE)
 
 
@@ -98,11 +98,11 @@ def alphas():
         ax.set_yticks(range(5), ["Small", "2", "3", "4", "Big"] if model == "CAPM" else [""] * 5)
         ax.tick_params(length=0)
         ax.set_xlabel("Book-to-market")
-        ax.set_title(f"{model}: mean |α| {table[model].abs().mean():.3f}", loc="left", fontsize=11, color=INK)
+        ax.set_title(f"{model}: average |α| {table[model].abs().mean():.3f}", loc="left", fontsize=11, color=INK)
         for spine in ax.spines.values():
             spine.set_visible(False)
     save(fig, "alphas.png", "Value is explained by the factors, and small growth only partly",
-         "Alpha of each portfolio, per cent a month, 1963-07 to 2026-09. Blue is below what the model predicts, orange above.",
+         "Average return each model leaves unexplained (alpha), % a month, 1963-07 to 2026-09. Blue below zero, orange above.",
          "The three-factor model takes out most of the value pattern. The five-factor model shrinks the small growth alpha further but raises some others. " + SOURCE)
 
 
@@ -114,11 +114,11 @@ def rolling():
     for model in MODELS:
         ax.plot(when, table[model], color=COLOURS[model], lw=1.8, label=model)
     ax.set_ylim(0, 1)
-    ax.set_ylabel("Cross-sectional R²")
+    ax.set_ylabel("R²")
     ax.legend(loc="upper left", bbox_to_anchor=(0, -0.06), ncol=3, handlelength=1.4, columnspacing=1.6, labelcolor=MUTED, borderaxespad=0)
     save(fig, "rolling_r2.png", "The fit comes and goes",
-         "R² of mean returns on betas over each ten-year window, by the month it ends. 25 size and book-to-market portfolios.",
-         "Betas and means are both re-estimated in each window, so neighbouring points share nine years of data. " + SOURCE)
+         "Share of differences in average returns explained by betas, over each ten-year window, by the month it ends.",
+         "25 size and book-to-market portfolios. Betas and averages are re-estimated in each window, so neighbouring points share nine years of data. " + SOURCE)
 
 
 def by_assets():
@@ -139,7 +139,7 @@ def by_assets():
     ax.grid(axis="y", visible=False)
     ax.legend(loc="upper left", bbox_to_anchor=(0, -0.07), ncol=3, handlelength=1.4, columnspacing=1.6, labelcolor=MUTED, borderaxespad=0)
     save(fig, "alpha_by_assets.png", "On industries, adding factors makes the alphas larger",
-         "Mean absolute alpha, per cent a month, by model and set of test portfolios, 1963-07 to 2026-09.",
+         "Average absolute alpha, % a month, by model and set of test portfolios, 1963-07 to 2026-09.",
          "The first three sets are sorted on the characteristics behind the factors. Industries are not. " + SOURCE)
 
 

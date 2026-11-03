@@ -2,84 +2,107 @@
 
 [![tests](https://github.com/atamalfuzi/capm_factor_tests/actions/workflows/tests.yml/badge.svg)](https://github.com/atamalfuzi/capm_factor_tests/actions/workflows/tests.yml)
 
-Does the CAPM hold up on US stock returns through the latest available month, and how much do the Fama-French three- and five-factor models add? Python, with pandas and SciPy.
+Why do some stocks earn more than others on average? The textbook answer is the capital asset pricing model (CAPM): a stock's expected return depends only on its market beta, which measures how strongly it moves with the market as a whole. This project tests that answer on US stock returns from 1926 to September 2026. It also asks how much two well-known extensions add: the Fama-French three-factor model, which adds company size and value, and the five-factor model, which also adds profitability and investment. Python, with pandas and SciPy.
 
-This is a redo of an exercise from ECON 815 (Financial Economics) at Simon Fraser University, Fall 2021, written as a standalone analysis on current data. Results are as of November 2026, with data through September 2026 from the Kenneth French Data Library, in files built from the 202609 CRSP database.
+Results are as of November 2026, with data through September 2026 from the Kenneth French Data Library, in files built from the 202609 CRSP database.
 
 > **Personal project.** This is my own analysis of publicly available data. It is not associated with my work for any current or past employer and does not represent their views.
 
 | Question | Methods | Answer |
 |---|---|---|
-| [Does the old result reproduce?](#1-does-the-old-result-reproduce) | The assignment's regression on its own files | Yes: R² 0.1144 and slope 0.3993. On current files through 2026-09, R² is 0.098. |
-| [Does the CAPM hold up?](#2-does-the-capm-hold-up) | GRS, Fama-MacBeth with Shanken errors | No. GRS rejects it (p below 0.001), and since 1963 the slope on beta is negative. |
-| [How much do the factors add?](#3-how-much-do-the-factors-add) | Same tests, spanning regressions, Hansen-Jagannathan distance | Since 1963, R² goes from 0.08 to 0.66 to 0.75, and mean absolute alpha from 0.19 to 0.09 to 0.09. GRS rejects all three. |
-| [Is that stable?](#4-is-that-stable) | Subperiods, ten-year windows | No. The CAPM is not rejected before 1963, and since 2009 no model's R² is above 0.16. |
-| [Does it depend on the portfolios?](#5-does-it-depend-on-the-portfolios) | Three more sets of test portfolios | Yes. On 30 industries, adding factors makes the alphas larger. |
+| [Does my 2021 result still reproduce?](#1-does-the-2021-result-reproduce) | The same regression on the same files | Yes: an R² of 0.1144 and a slope of 0.3993. With today's files and data through 2026-09, the R² is 0.098. |
+| [Does the CAPM hold up?](#2-does-the-capm-hold-up) | GRS test, Fama-MacBeth regressions | No. The test rejects it (p below 0.001), and since 1963 portfolios with higher betas have earned slightly less on average. |
+| [How much do the extra factors add?](#3-how-much-do-the-extra-factors-add) | The same tests, Hansen-Jagannathan distance, tests between factors | A lot on the usual test portfolios. The share of differences in average returns explained rises from 8% to 66% with three factors and 75% with five. All three models are still rejected. |
+| [Is it stable over time?](#4-is-it-stable-over-time) | Four periods, ten-year windows | No. The CAPM passes before 1963. Since 2009, no model explains more than 16%. |
+| [Does it depend on which portfolios are tested?](#5-does-it-depend-on-which-portfolios-are-tested) | Three more sets of portfolios | Yes. On 30 industry portfolios the CAPM passes, and the extra factors make the errors larger. |
 
-## What it shows
+## How the tests work
 
-Test portfolios are the 25 value-weighted portfolios formed on size and book-to-market, unless stated otherwise. Returns are monthly, in per cent, and in excess of the T-bill rate. The five-factor file starts in 1963-07, so comparisons of all three models use 1963-07 to 2026-09 (759 months).
+The tests use portfolios, groups of stocks sorted by some feature, because single stocks are too noisy. The main set is 25 portfolios formed by sorting US stocks on size (market value) and on book-to-market, the ratio of a company's accounting value to its market value. Stocks with a high book-to-market ratio are called value stocks, and those with a low one growth stocks. Returns are monthly, in per cent, and measured above the one-month Treasury bill rate.
 
-### 1. Does the old result reproduce?
+Each model names one or more factors. A factor is the return on a particular portfolio:
 
-| Sample | Months | R² | Slope | Mean market excess return |
+| Factor | What it is |
+|---|---|
+| Market (Mkt-RF) | The whole US stock market, less the T-bill rate |
+| SMB, small minus big | Small companies less large ones |
+| HML, high minus low | Value stocks less growth stocks |
+| RMW, robust minus weak | Highly profitable companies less weakly profitable ones |
+| CMA, conservative minus aggressive | Companies that invest little less those that invest a lot |
+
+The CAPM uses the market alone. The three-factor model adds SMB and HML, and the five-factor model adds RMW and CMA.
+
+- **Beta and alpha.** Each portfolio's monthly return is regressed on the factors. The slopes are its betas, how strongly it moves with each factor. The intercept is its alpha, the average return the model leaves unexplained. If a model is right, every alpha is zero.
+- **GRS test** (Gibbons, Ross and Shanken, 1989). It asks whether all 25 alphas are zero together. A small p-value means the model is rejected. The test assumes returns are normally distributed, which they are not quite, so I also report a p-value from resampling the data that does not rely on that assumption.
+- **Fama-MacBeth regressions** (Fama and MacBeth, 1973). They ask the question the other way round: do portfolios with higher betas earn higher average returns, and how much more per unit of beta? That amount is the factor's price. If the model is right, the line through the portfolios passes through zero and each factor's price equals its average return. Shanken's (1992) correction allows for the betas being estimates. The R² of this line is the share of the differences in average returns across portfolios that the betas explain. The 2021 result of 11% is this R².
+- **Hansen-Jagannathan distance** (Hansen and Jagannathan, 1997). It is the largest pricing error a model makes on any combination of the test portfolios, with each combination scaled to the same size. Zero is a perfect fit.
+
+The five-factor data start in July 1963, so comparisons of all three models use July 1963 to September 2026, 759 months.
+
+## 1. Does the 2021 result reproduce?
+
+In a 2021 course exercise, I ran this CAPM regression on the 25 portfolios and found that betas explain 11.4% of the differences in average returns. That work is in my [coursework archive](https://github.com/atamalfuzi/economics_coursework/tree/main/Financial%20Economics/Exercise%201).
+
+| Sample | Months | R² | Slope | Average market excess return, % a month |
 |---|---:|---:|---:|---:|
-| Coursework files, 1926-07 to 2020-09 | 1131 | 0.1144 | 0.399 | 0.670 |
-| Coursework files, stopped at 2019-12 | 1122 | 0.1035 | 0.402 | 0.667 |
+| 2021 files, 1926-07 to 2020-09 | 1131 | 0.1144 | 0.399 | 0.670 |
+| 2021 files, stopped at 2019-12 | 1122 | 0.1035 | 0.402 | 0.667 |
 | Current files, 1926-07 to 2020-09 | 1131 | 0.1176 | 0.413 | 0.671 |
 | Current files, 1926-07 to 2026-09 | 1203 | 0.0978 | 0.399 | 0.694 |
 | Current files, 1963-07 to 2026-09 | 759 | 0.0822 | −0.367 | 0.600 |
 
-The first row matches the assignment's reported R² and slope, and a test checks it. The assignment's data ran to 2020-09, so stopping at the end of 2019 does not give its figure.
+The first row matches the 2021 result exactly, and a test checks it. Those files ran to September 2020, so stopping at the end of 2019 gives a different figure.
 
-The assignment used raw returns where excess returns would be usual. This moves the intercept and leaves R² and the slope unchanged, because the T-bill rate shifts every beta by the same amount. Its Sharpe ratio divided by the standard deviation of the total market return, which gives 0.1255 against 0.1253.
+The 2021 exercise used total returns, where returns above the T-bill rate are usual. That changes only the intercept. The R² and the slope stay the same, because the T-bill rate shifts every beta by the same amount. Its Sharpe ratio, the average excess return divided by its standard deviation, used the standard deviation of the total market return instead. That gives 0.1255 against 0.1253.
 
-French's files change over time as CRSP revises its data. Over the same months, the portfolio returns moved by 0.20 points a month on average and by up to 9.4 points in one month (SMALL LoBM, 1945-01), while no portfolio's mean moved by more than 0.016. That is why the same months now give 0.1176.
+French's files change over time as CRSP, the database behind them, corrects its records. Over the same months, portfolio returns moved by 0.20 percentage points a month on average, and by up to 9.4 points in one month (small growth stocks, January 1945). No portfolio's average moved by more than 0.016. That is why the same months now give 0.1176.
 
-### 2. Does the CAPM hold up?
+## 2. Does the CAPM hold up?
 
-![Mean excess return against market beta](figures/capm_line.png)
+![Average excess return against market beta](figures/capm_line.png)
 
-| Sample | GRS F | p, F distribution | p, resampled | Mean absolute alpha | R² | Intercept (Shanken t) | Price of market risk (Shanken t) | Mean market excess return |
+| Sample | GRS F | p-value | p-value, resampled | Average absolute alpha, % a month | R² | Intercept (t) | Price of market risk (t) | Average market excess return |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1926-07 to 2026-09 | 3.39 | 5×10⁻⁸ | below 0.001 | 0.154 | 0.098 | 0.41 (1.27) | 0.40 (1.15) | 0.69 |
 | 1963-07 to 2026-09 | 4.17 | 1×10⁻¹⁰ | below 0.001 | 0.193 | 0.082 | 1.16 (3.12) | −0.37 (−0.92) | 0.60 |
 
-The two samples have about the same R², and they say different things. Over the full history the slope has the right sign and is about 60% of the market premium. Since 1963 it is negative, and the intercept, which the CAPM says is zero, is 1.16% a month. The R² alone hides this.
+The t-values in brackets use Shanken's correction. Values beyond about ±2 are significant at the 5% level.
 
-The 95% resampled range for the R² since 1963 is 0.00 to 0.53, so one sample's R² is a rough measure.
+Betas explain a similar small share in both samples, 10% and 8%, but the two samples say different things. Over the full history, higher beta goes with higher average returns, at about 60% of the rate the CAPM predicts. Since 1963 the slope is negative, so higher-beta portfolios earned slightly less. The intercept, which the CAPM says should be zero, is 1.16% a month. The R² alone hides this.
 
-### 3. How much do the factors add?
+The R² from one sample is a rough measure. Resampling the months gives a 95% range of 0.00 to 0.53 for the R² since 1963.
 
-![Actual and fitted mean returns under each model](figures/model_fit.png)
+## 3. How much do the extra factors add?
+
+![Actual and fitted average returns under each model](figures/model_fit.png)
 
 | 1963-07 to 2026-09 | CAPM | Three-factor | Five-factor |
 |---|---:|---:|---:|
 | GRS F | 4.17 | 3.63 | 3.21 |
-| p, F distribution | 1×10⁻¹⁰ | 9×10⁻⁹ | 3×10⁻⁷ |
-| p, resampled | below 0.001 | below 0.001 | below 0.001 |
-| Mean absolute alpha, % a month | 0.193 | 0.087 | 0.089 |
+| p-value | 1×10⁻¹⁰ | 9×10⁻⁹ | 3×10⁻⁷ |
+| p-value, resampled | below 0.001 | below 0.001 | below 0.001 |
+| Average absolute alpha, % a month | 0.193 | 0.087 | 0.089 |
 | Largest absolute alpha | 0.529 | 0.466 | 0.277 |
-| Cross-sectional R² | 0.08 | 0.66 | 0.75 |
-| Adjusted R² | 0.04 | 0.61 | 0.69 |
-| 95% resampled range for R² | 0.00 to 0.53 | 0.22 to 0.85 | 0.39 to 0.90 |
-| R² with intercept zero and prices at factor means | −0.85 | 0.42 | 0.59 |
+| R² | 0.08 | 0.66 | 0.75 |
+| R², adjusted for the number of factors | 0.04 | 0.61 | 0.69 |
+| 95% range for R² | 0.00 to 0.53 | 0.22 to 0.85 | 0.39 to 0.90 |
+| R² with no intercept and each price equal to the factor's average | −0.85 | 0.42 | 0.59 |
 | Hansen-Jagannathan distance | 0.375 | 0.351 | 0.328 |
-| 95% resampled range | 0.339 to 0.513 | 0.316 to 0.480 | 0.278 to 0.451 |
+| 95% range | 0.339 to 0.513 | 0.316 to 0.480 | 0.278 to 0.451 |
 
-The three-factor model does most of the work on these portfolios. It halves the mean absolute alpha and takes out most of the value pattern. The five-factor model leaves the mean alpha where it was and mainly shrinks the largest one, small growth, from −0.47 to −0.28. The R² ranges overlap, so these data do not separate the two models on that measure. All three are rejected.
+On these portfolios the three-factor model does most of the work. It halves the average alpha and removes most of the difference between value and growth stocks. The five-factor model leaves the average alpha about where it was, and mainly shrinks the largest one, for small growth stocks, from −0.47 to −0.28% a month. The R² ranges overlap, so the data cannot tell the two models apart on that measure. All three models are rejected.
 
 ![Alpha of each portfolio under each model](figures/alphas.png)
 
-The row with a zero intercept and prices set at factor means is the stricter measure, since it is what the models actually claim. It can be negative: the CAPM line fits worse than a flat line through the mean.
+The row with no intercept and each price equal to the factor's average is the stricter measure, because that is what the models actually claim. It can be negative. For the CAPM it is −0.85, which means the model's line fits worse than a flat line at the average return.
 
-Free cross-sectional prices can look odd. In the five-factor fit the market's price is −0.49 (Shanken t −1.52) beside an intercept of 1.05. Market betas barely vary across these portfolios, so the two are hard to tell apart. Their sum, 0.56, is close to the market's mean of 0.60. The Shanken correction changes little here, for example moving that t from −1.58, because monthly factor Sharpe ratios are small.
+When the line is not held to the model's claims, the estimated prices can look odd. In the five-factor fit the market's price is −0.49 (t −1.52), with an intercept of 1.05. Market betas are all close to 1 across these portfolios, so the data cannot separate the market's price from the intercept. Their sum, 0.56, is close to the market's average of 0.60. Shanken's correction changes little here. For example, it moves that t-value from −1.58 to −1.52, because monthly factor returns are small relative to their swings.
 
-The Hansen-Jagannathan distance prices the gross returns of the 25 portfolios and the T-bill. A constant discount factor gives 0.400 (0.368 to 0.534), so the factors take off 6%, 12% and 18% of that distance. Each model's distance can only fall as factors are added, and the ranges overlap.
+The Hansen-Jagannathan distance is measured on the 25 portfolios plus the T-bill. A model with no factors, which discounts every return at the same rate, gives 0.400 (range 0.368 to 0.534). The CAPM, three- and five-factor models reduce that by 6%, 12% and 18%. Adding a factor can only reduce the distance, and the ranges overlap.
 
-Whether a factor adds anything can also be tested on the factors alone, by asking whether it has an alpha against the others (five-factor file, 1963-07 to 2026-09):
+Another way to ask whether a factor adds anything is to test whether it earns returns the other factors cannot explain, that is, whether it has an alpha against them. These use the five-factor file, July 1963 to September 2026:
 
-| Added | Against | Alpha, % a month | p |
+| Added | Against | Alpha, % a month | p-value |
 |---|---|---:|---:|
 | SMB and HML | Market | 0.070 and 0.376 | 0.002 |
 | RMW and CMA | Market, SMB, HML | 0.298 and 0.179 | 6×10⁻⁷ |
@@ -88,11 +111,11 @@ Whether a factor adds anything can also be tested on the factors alone, by askin
 | RMW | The other four | 0.335 | 3×10⁻⁵ |
 | CMA | The other four | 0.207 | 1×10⁻⁴ |
 
-HML has no alpha once the other four are in, the result Fama and French (2015) reported, and it still holds through 2026. The highest Sharpe ratio available from the factors rises from 0.47 a year to 0.65 and 0.95.
+HML, the value factor, has no alpha once the other four are included. Fama and French (2015) found this, and it still holds through 2026. Profitability and investment add the most. Combining each model's factors, the best Sharpe ratio available rises from 0.47 a year for the market alone to 0.65 with three factors and 0.95 with five.
 
-### 4. Is that stable?
+## 4. Is it stable over time?
 
-| Period | Model | GRS F | p, F distribution | p, resampled | Mean absolute alpha | R² |
+| Period | Model | GRS F | p-value | p-value, resampled | Average absolute alpha | R² |
 |---|---|---:|---:|---:|---:|---:|
 | 1926-07 to 1963-06 | CAPM | 1.38 | 0.106 | 0.185 | 0.146 | 0.30 |
 | | Three-factor | 1.65 | 0.027 | 0.092 | 0.147 | 0.63 |
@@ -109,17 +132,17 @@ HML has no alpha once the other four are in, the result Fama and French (2015) r
 | | Three-factor | 1.48 | 0.124 | n/a | 0.261 | 0.54 |
 | | Five-factor | 1.64 | 0.076 | n/a | 0.258 | 0.64 |
 
-The last three rows are the months since the assignment's data ended, and they overlap the three above them.
+The last three rows cover the months since the 2021 files ended, and they overlap the three rows above them.
 
-Before 1963 the CAPM is not rejected and beta lines up with mean returns, though the price of market risk is imprecise (0.67, Shanken t 1.22). The three- and five-factor models fit best in 1963 to 1990, close to the period they were built on. Since 2009 their R² has fallen to 0.14 and 0.16, and whether they are rejected depends on the p-value used. The 72 months since 2020-10 are too few to settle much with 25 portfolios.
+Before 1963 the CAPM is not rejected, and higher betas go with higher average returns, though the price of market risk is imprecise (0.67, t 1.22). The three- and five-factor models fit best from 1963 to 1990, close to the period they were designed on. Since 2009 their R² has fallen to 0.14 and 0.16, and whether they are rejected depends on which p-value you use. The 72 months since October 2020 are too few to settle much with 25 portfolios.
 
 ![R² over ten-year windows](figures/rolling_r2.png)
 
-### 5. Does it depend on the portfolios?
+## 5. Does it depend on which portfolios are tested?
 
-![Mean absolute alpha by set of test portfolios](figures/alpha_by_assets.png)
+![Average absolute alpha by set of test portfolios](figures/alpha_by_assets.png)
 
-| 1963-07 to 2026-09 | Model | GRS F | p, resampled | R² | Adjusted R² | R² at factor means |
+| 1963-07 to 2026-09 | Model | GRS F | p-value, resampled | R² | R², adjusted | R² with prices at factor averages |
 |---|---|---:|---:|---:|---:|---:|
 | Size and profitability | CAPM | 2.20 | 0.013 | 0.00 | −0.04 | −0.47 |
 | | Three-factor | 2.48 | 0.003 | 0.57 | 0.51 | 0.31 |
@@ -131,16 +154,18 @@ Before 1963 the CAPM is not rejected and beta lines up with mean returns, though
 | | Three-factor | 2.22 | 0.007 | 0.13 | 0.03 | −1.54 |
 | | Five-factor | 2.76 | 0.002 | 0.20 | 0.03 | −2.56 |
 
-Size and book-to-market portfolios are a low bar, because the factors are built from the same sorts (Lewellen, Nagel and Shanken, 2010). The five-factor model's gain shows up on profitability sorts, as you would expect. On industries the pattern reverses: the CAPM is not rejected, and the extra factors raise the mean absolute alpha from 0.127 to 0.175 and 0.216. The CAPM's rejection comes from portfolios sorted on these characteristics, and the extra factors' gains do not carry over to portfolios formed another way.
+The size and book-to-market portfolios are an easy test for the factor models, because the factors are built from the same sorts (Lewellen, Nagel and Shanken, 2010). The five-factor model's gain shows up mainly on portfolios sorted by profitability, which its profitability factor was designed to capture.
+
+Industry portfolios are not sorted on any of these features, and there the pattern reverses. The CAPM is not rejected, and adding factors raises the average alpha from 0.127 to 0.175 and 0.216. So the CAPM's rejection comes from portfolios sorted on these characteristics, and the extra factors' gains do not carry over to portfolios formed another way.
 
 ## Data and checks
 
-- All returns come from the [Kenneth French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html). The five-factor file has its own SMB, which correlates 0.98 with the three-factor file's, so each model uses its own file. The market and T-bill series agree between the two files to within 0.08 and 0 points.
-- `coursework/` holds the assignment's two data files, copied from my public [coursework archive](https://github.com/atamalfuzi/economics_coursework), so the reproduction test runs without a download.
-- GRS assumes normal errors, so I also resample months in blocks of 12 with the alphas taken out. Simulating 200 samples with zero alphas (`output/resampled_size.csv`), the F test rejects at 5% in 4% to 8% of them. The resampled test rejects in about 5% at 759 months, 2% to 3% at 213 and never at 72. So it leans conservative in shorter samples, and it is left out for the 72-month rows, although `output/subperiods.csv` still lists it. With 2000 draws its floor is 0.0005.
-- Betas are full-sample within each period, and fitted means use the same data. Errors in the betas bias prices toward zero. The R² ranges are percentile ranges and not corrected for this.
-- The subperiod rows are several tests on the same data, with no adjustment for that.
-- Tests compare GRS with the squared t of one asset and with statsmodels' multivariate test, check its size by simulation, check Shanken errors against the actual spread of simulated estimates, and check the Hansen-Jagannathan distance against a numerical minimum.
+- All returns come from the [Kenneth French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html). The five-factor file has its own version of SMB, which has a correlation of 0.98 with the three-factor file's, so each model uses its own file. The market and T-bill series in the two files differ by at most 0.08 and 0 percentage points.
+- `coursework/` holds the two data files from the 2021 exercise, copied from my public [coursework archive](https://github.com/atamalfuzi/economics_coursework), so the reproduction test runs without a download.
+- The resampled p-value draws months in blocks of 12, after taking out the alphas, and asks how often the GRS statistic comes out as large as the real one. To check it, I simulated 200 samples in which every alpha is zero (`output/resampled_size.csv`). The usual GRS test wrongly rejects at the 5% level in 4% to 8% of them. The resampled test does so in about 5% at 759 months, 2% to 3% at 213 months, and never at 72. So it is cautious in shorter samples, and it is left out for the 72-month rows, although `output/subperiods.csv` still lists it. With 2000 resamples, its smallest possible value is 0.0005.
+- Betas are estimated over the whole of each period, from the same months as the averages. Errors in estimated betas pull the estimated prices toward zero. The R² ranges are taken directly from the resamples and are not corrected for this.
+- The rows for different periods are separate tests on overlapping data, with no adjustment for testing several times.
+- The tests check the GRS statistic against the squared t-value for a single portfolio and against statsmodels' multivariate test, and check by simulation that it rejects about 5% of the time when the alphas are zero. They check Shanken's standard errors against the actual spread of simulated estimates, and the Hansen-Jagannathan distance against a numerical minimum.
 
 ## Run it
 
