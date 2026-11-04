@@ -54,8 +54,8 @@ def test_stops_if_the_title_is_absent(tmp_path):
         data.read_monthly(csv_zip(tmp_path), "No such section")
 
 
-def test_coursework_files_share_their_months():
-    r, table = data.read_coursework()
+def test_reference_files_share_their_months():
+    r, table = data.read_reference()
     assert r.index.equals(table.index) and r.shape[1] == 25
 
 

@@ -1,11 +1,11 @@
-"""The coursework figure and the estimators, against statsmodels, SciPy and simulations. No downloads."""
+"""The 2021 figure and the estimators, against statsmodels, SciPy and simulations. No downloads."""
 import numpy as np
 import pytest
 import statsmodels.api as sm
 from scipy.optimize import minimize
 from statsmodels.multivariate.multivariate_ols import _MultivariateOLS
 
-from data import read_coursework
+from data import read_reference
 from estimate import capm_line, cross_section_fit, fama_macbeth, grs, grs_resampled_p, hj_distance, resampled, time_series
 
 
@@ -16,22 +16,22 @@ def panel(T=600, N=10, L=2, alpha=0.0, seed=0):
     return alpha + f @ b.T + rng.normal(0, 2, size=(T, N)), f
 
 
-def test_reproduces_the_coursework_regression():
-    r, table = read_coursework()
+def test_reproduces_the_2021_regression():
+    r, table = read_reference()
     fit = capm_line(r, table["Mkt-RF"])
     assert (fit["first"], fit["last"], fit["months"]) == ("1926-07", "2020-09", 1131)
-    assert round(fit["r2"], 4) == 0.1144  # "R^2 = 0.1144" in Financial_first_assignment.Rmd
+    assert round(fit["r2"], 4) == 0.1144  # the R^2 reported by the 2021 run
     assert round(fit["slope"], 4) == 0.3993
     assert round(fit["mean_mkt_rf"], 2) == 0.67
 
 
-def test_coursework_extremes_are_the_small_portfolios_it_names():
-    means = read_coursework()[0].mean()
+def test_2021_extremes_are_the_small_portfolios_it_names():
+    means = read_reference()[0].mean()
     assert (means.idxmax(), means.idxmin()) == ("SMALL HiBM", "SMALL LoBM")
 
 
 def test_taking_out_the_t_bill_moves_only_the_intercept():
-    r, table = read_coursework()
+    r, table = read_reference()
     raw, net = capm_line(r, table["Mkt-RF"]), capm_line(r.sub(table.RF, axis=0), table["Mkt-RF"])
     assert net["r2"] == pytest.approx(raw["r2"]) and net["slope"] == pytest.approx(raw["slope"])
     assert net["intercept"] != pytest.approx(raw["intercept"])

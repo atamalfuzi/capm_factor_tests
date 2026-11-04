@@ -3,10 +3,10 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from data import FACTOR_FILES, MAIN, MODELS, OUTPUT, PORTFOLIO_FILES, RAW, factors, portfolios, read_coursework, read_monthly
+from data import FACTOR_FILES, MAIN, MODELS, OUTPUT, PORTFOLIO_FILES, RAW, factors, portfolios, read_monthly, read_reference
 
 COMMON_START = "1963-07"  # the first month of the five-factor file
-COURSEWORK_END = "2020-09"
+REFERENCE_END = "2020-09"
 PERIODS = {"1926-07 to 1963-06": ("1926-07", "1963-06"), "1963-07 to 1990-12": ("1963-07", "1990-12"),
            "1991-01 to 2008-12": ("1991-01", "2008-12"), "2009-01 to latest": ("2009-01", None),
            "2020-10 to latest": ("2020-10", None)}
@@ -126,25 +126,25 @@ def r2_range(r, f):
 
 
 def capm_line(returns, market):
-    """The assignment's regression: raw mean returns on betas from raw returns on the market excess return."""
+    """The 2021 regression: raw mean returns on betas from raw returns on the market excess return."""
     (intercept, slope), r2 = cross_section_fit(returns.mean().to_numpy(), time_series(returns.to_numpy(), market.to_numpy())[1])
     return {"first": str(returns.index[0]), "last": str(returns.index[-1]), "months": len(returns), "r2": r2, "slope": slope, "intercept": intercept,
             "mean_mkt_rf": market.to_numpy().mean()}
 
 
 def reproduction():
-    r, table = read_coursework()
-    rows = [("Coursework files", r, table["Mkt-RF"]), ("Coursework files, stopped at 2019-12", r.loc[:"2019-12"], table["Mkt-RF"].loc[:"2019-12"])]
+    r, table = read_reference()
+    rows = [("2021 files", r, table["Mkt-RF"]), ("2021 files, stopped at 2019-12", r.loc[:"2019-12"], table["Mkt-RF"].loc[:"2019-12"])]
     p, (mkt, _) = portfolios(), factors("CAPM")
-    rows += [("Current files, same months", p.loc[:COURSEWORK_END], mkt.loc[:COURSEWORK_END]),
+    rows += [("Current files, same months", p.loc[:REFERENCE_END], mkt.loc[:REFERENCE_END]),
              ("Current files, through latest", p, mkt.loc[p.index]),
              ("Current files, 1963-07 to latest", p.loc[COMMON_START:], mkt.loc[COMMON_START:])]
     return pd.DataFrame([{"sample": label} | capm_line(returns, m) for label, returns, m in rows])
 
 
 def revisions():
-    """How far the current files have moved from the coursework copies over the same months."""
-    r, table = read_coursework()
+    """How far the current files have moved from the 2021 copies over the same months."""
+    r, table = read_reference()
     p = portfolios().loc[r.index]
     f = read_monthly(RAW / FACTOR_FILES["three"]).loc[r.index]
     gap = (p - r).abs()

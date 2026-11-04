@@ -41,7 +41,7 @@ The five-factor data start in July 1963, so comparisons of all three models use 
 
 ## 1. Does the 2021 result reproduce?
 
-In a 2021 course exercise, I ran this CAPM regression on the 25 portfolios and found that betas explain 11.4% of the differences in average returns. That work is in my [coursework archive](https://github.com/atamalfuzi/economics_coursework/tree/main/Financial%20Economics/Exercise%201).
+In 2021 I ran this CAPM regression on the 25 portfolios and found that betas explain 11.4% of the differences in average returns.
 
 | Sample | Months | R² | Slope | Average market excess return, % a month |
 |---|---:|---:|---:|---:|
@@ -53,7 +53,7 @@ In a 2021 course exercise, I ran this CAPM regression on the 25 portfolios and f
 
 The first row matches the 2021 result exactly, and a test checks it. Those files ran to September 2020, so stopping at the end of 2019 gives a different figure.
 
-The 2021 exercise used total returns, where returns above the T-bill rate are usual. That changes only the intercept. The R² and the slope stay the same, because the T-bill rate shifts every beta by the same amount. Its Sharpe ratio, the average excess return divided by its standard deviation, used the standard deviation of the total market return instead. That gives 0.1255 against 0.1253.
+The 2021 run used total returns, where returns above the T-bill rate are usual. That changes only the intercept. The R² and the slope stay the same, because the T-bill rate shifts every beta by the same amount. Its Sharpe ratio, the average excess return divided by its standard deviation, used the standard deviation of the total market return instead. That gives 0.1255 against 0.1253.
 
 French's files change over time as CRSP, the database behind them, corrects its records. Over the same months, portfolio returns moved by 0.20 percentage points a month on average, and by up to 9.4 points in one month (small growth stocks, January 1945). No portfolio's average moved by more than 0.016. That is why the same months now give 0.1176.
 
@@ -161,7 +161,7 @@ Industry portfolios are not sorted on any of these features, and there the patte
 ## Data and checks
 
 - All returns come from the [Kenneth French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html). The five-factor file has its own version of SMB, which has a correlation of 0.98 with the three-factor file's, so each model uses its own file. The market and T-bill series in the two files differ by at most 0.08 and 0 percentage points.
-- `coursework/` holds the two data files from the 2021 exercise, copied from my public [coursework archive](https://github.com/atamalfuzi/economics_coursework), so the reproduction test runs without a download.
+- `reference_2021/` holds the two data files the 2021 run used, so the reproduction test runs without a download.
 - The resampled p-value draws months in blocks of 12, after taking out the alphas, and asks how often the GRS statistic comes out as large as the real one. To check it, I simulated 200 samples in which every alpha is zero (`output/resampled_size.csv`). The usual GRS test wrongly rejects at the 5% level in 4% to 8% of them. The resampled test does so in about 5% at 759 months, 2% to 3% at 213 months, and never at 72. So it is cautious in shorter samples, and it is left out for the 72-month rows, although `output/subperiods.csv` still lists it. With 2000 resamples, its smallest possible value is 0.0005.
 - Betas are estimated over the whole of each period, from the same months as the averages. Errors in estimated betas pull the estimated prices toward zero. The R² ranges are taken directly from the resamples and are not corrected for this.
 - The rows for different periods are separate tests on overlapping data, with no adjustment for testing several times.

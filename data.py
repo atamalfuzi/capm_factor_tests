@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).parent
-RAW, COURSEWORK = ROOT / "data", ROOT / "coursework"
+RAW, REFERENCE = ROOT / "data", ROOT / "reference_2021"
 OUTPUT, FIGURES = ROOT / "output", ROOT / "figures"
 BASE = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
 
@@ -58,10 +58,10 @@ def portfolios(name=MAIN):
     return read_monthly(RAW / PORTFOLIO_FILES[name], VALUE_WEIGHTED)
 
 
-def read_coursework():
-    """The 2021 copies of the portfolio and factor files, as the assignment read them."""
-    returns = pd.read_csv(COURSEWORK / "Average_Value_Weighted.csv", index_col=0)
-    table = pd.read_csv(COURSEWORK / "Fama_French_Factors_cleaned.csv", index_col=0)
+def read_reference():
+    """The 2021 copies of the portfolio and factor files, as the 2021 run read them."""
+    returns = pd.read_csv(REFERENCE / "Average_Value_Weighted.csv", index_col=0)
+    table = pd.read_csv(REFERENCE / "Fama_French_Factors_cleaned.csv", index_col=0)
     for d in (returns, table):
         d.index = pd.PeriodIndex(d.index.astype(str), freq="M")
     return returns, table
