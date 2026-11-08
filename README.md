@@ -11,10 +11,10 @@ Results are as of November 2026, with data through September 2026 from the Kenne
 | Question | Methods | Answer |
 |---|---|---|
 | [Does my 2021 result still reproduce?](#1-does-the-2021-result-reproduce) | The same regression on the same files | Yes: an R² of 0.1144 and a slope of 0.3993. With today's files and data through 2026-09, the R² is 0.098. |
-| [Does the CAPM hold up?](#2-does-the-capm-hold-up) | GRS test, Fama-MacBeth regressions | No. The test rejects it (p below 0.001), and since 1963 portfolios with higher betas have earned slightly less on average. |
+| [Does the CAPM hold up?](#2-does-the-capm-hold-up) | GRS test, Fama-MacBeth regressions | No. The test rejects it (p below 0.001), and since 1963 portfolios with higher betas have earned no more on average. |
 | [How much do the extra factors add?](#3-how-much-do-the-extra-factors-add) | The same tests, Hansen-Jagannathan distance, tests between factors | A lot on the usual test portfolios. The share of differences in average returns explained rises from 8% to 66% with three factors and 75% with five. All three models are still rejected. |
 | [Is it stable over time?](#4-is-it-stable-over-time) | Four periods, ten-year windows | No. The CAPM passes before 1963. Since 2009, no model explains more than 16%. |
-| [Does it depend on which portfolios are tested?](#5-does-it-depend-on-which-portfolios-are-tested) | Three more sets of portfolios | Yes. On 30 industry portfolios the CAPM passes, and the extra factors make the errors larger. |
+| [Does it depend on which portfolios are tested?](#5-does-it-depend-on-which-portfolios-are-tested) | Three more sets of portfolios | Yes. On 30 industry portfolios the CAPM isn't rejected, though beta explains little of their average returns, and the extra factors make the errors larger. |
 
 ## How the tests work
 
@@ -68,7 +68,7 @@ French's files change over time as CRSP, the database behind them, corrects its 
 
 The t-values in brackets use Shanken's correction. Values beyond about ±2 are significant at the 5% level.
 
-Betas explain a similar small share in both samples, 10% and 8%, but the two samples say different things. Over the full history, higher beta goes with higher average returns, at about 60% of the rate the CAPM predicts. Since 1963 the slope is negative, so higher-beta portfolios earned slightly less. The intercept, which the CAPM says should be zero, is 1.16% a month. The R² alone hides this.
+Betas explain a similar small share in both samples, 10% and 8%, but the two samples say different things. Over the full history, higher beta goes with higher average returns, at about 60% of the rate the CAPM predicts. Since 1963 the slope is negative, so higher-beta portfolios earned slightly less. Neither slope is clearly different from zero (t = 1.15 and −0.92). The intercept, which the CAPM says should be zero, is 1.16% a month. The R² alone hides this.
 
 The R² from one sample is a rough measure. Resampling the months gives a 95% range of 0.00 to 0.53 for the R² since 1963.
 
@@ -105,7 +105,7 @@ Another way to ask whether a factor adds anything is to test whether it earns re
 | Added | Against | Alpha, % a month | p-value |
 |---|---|---:|---:|
 | SMB and HML | Market | 0.070 and 0.376 | 0.002 |
-| RMW and CMA | Market, SMB, HML | 0.298 and 0.179 | 6×10⁻⁷ |
+| RMW and CMA | Market, SMB, HML | 0.298 and 0.179 | 5×10⁻⁷ |
 | HML | The other four | −0.025 | 0.75 |
 | SMB | The other four | 0.181 | 0.08 |
 | RMW | The other four | 0.335 | 3×10⁻⁵ |
@@ -123,7 +123,7 @@ HML, the value factor, has no alpha once the other four are included. Fama and F
 | | Three-factor | 1.31 | 0.154 | 0.203 | 0.089 | 0.77 |
 | | Five-factor | 0.93 | 0.559 | 0.540 | 0.080 | 0.87 |
 | 1991-01 to 2008-12 | CAPM | 4.20 | 5×10⁻⁹ | 0.008 | 0.334 | 0.34 |
-| | Three-factor | 3.75 | 9×10⁻⁸ | 0.010 | 0.150 | 0.71 |
+| | Three-factor | 3.75 | 9×10⁻⁸ | 0.009 | 0.150 | 0.71 |
 | | Five-factor | 3.47 | 6×10⁻⁷ | 0.075 | 0.188 | 0.71 |
 | 2009-01 to 2026-09 | CAPM | 1.82 | 0.013 | 0.079 | 0.229 | 0.00 |
 | | Three-factor | 1.71 | 0.024 | 0.119 | 0.090 | 0.14 |
@@ -151,12 +151,12 @@ Before 1963 the CAPM is not rejected, and higher betas go with higher average re
 | | Three-factor | 3.96 | below 0.001 | 0.64 | 0.59 | 0.29 |
 | | Five-factor | 3.11 | 0.002 | 0.64 | 0.54 | 0.57 |
 | 30 industries | CAPM | 1.32 | 0.208 | 0.05 | 0.01 | −0.54 |
-| | Three-factor | 2.22 | 0.007 | 0.13 | 0.03 | −1.54 |
+| | Three-factor | 2.22 | 0.006 | 0.13 | 0.03 | −1.54 |
 | | Five-factor | 2.76 | 0.002 | 0.20 | 0.03 | −2.56 |
 
 The size and book-to-market portfolios are an easy test for the factor models, because the factors are built from the same sorts (Lewellen, Nagel and Shanken, 2010). The five-factor model's gain shows up mainly on portfolios sorted by profitability, which its profitability factor was designed to capture.
 
-Industry portfolios are not sorted on any of these features, and there the pattern reverses. The CAPM is not rejected, and adding factors raises the average alpha from 0.127 to 0.175 and 0.216. So the CAPM's rejection comes from portfolios sorted on these characteristics, and the extra factors' gains do not carry over to portfolios formed another way.
+Industry portfolios are not sorted on any of these features, and there the pattern reverses. The CAPM is not rejected, though market beta explains only 5% of the differences in the industries' average returns, and adding factors raises the average alpha from 0.127 to 0.175 and 0.216. So the CAPM's rejection comes from portfolios sorted on these characteristics, and the extra factors' gains do not carry over to portfolios formed another way.
 
 ## Data and checks
 
